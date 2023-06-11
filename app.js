@@ -1,9 +1,13 @@
 const express = require("express");
+const path = require('path');
+
+const swaggerUi = require('swagger-ui-express');
+const specs = require('./middleware/swagger-config.js');
 require('dotenv').config();
 
 //routes
 const stuffRoutes = require('./routes/stuff');
-const userRoutes = require("./routes/user");
+const userRoutes = require("./routes/auth");
 
 const mongoose = require('mongoose');
 
@@ -33,8 +37,11 @@ app.use((req, res, next) => {
 app.use(express.json())
 
 //use stuff route
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/stuff', stuffRoutes);
 app.use('/api/auth', userRoutes);
+
+app.use('/', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
 module.exports = app;
 
